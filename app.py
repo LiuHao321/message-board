@@ -32,6 +32,7 @@ class User(db.Model):
 class Message(db.Model):
     __tablename__ = 'message'
     body = db.Column(db.TEXT)
+    time = db.Column(db.DATETIME)
     ID = db.Column(db.Integer,  primary_key=True)
     username = db.Column(db.String)
 
@@ -106,10 +107,10 @@ def message():
     form = WriteForm()
     name = session.get('username')
     if form.validate_on_submit():
-        body = form.body.data
         mess = Message(
-            body=body,
-            username=name
+            body=form.body.data,
+            username=name,
+            time=datetime.now()
         )
         db.session.add(mess)
         db.session.commit()
