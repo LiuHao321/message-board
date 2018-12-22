@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block metas %}
+    {{ super() }}
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+{% endblock %}
+
+{% block nav %}{% endblock %}
+
+{% block content %}
+<h2>form.username</h2>
+    <div class="container">
+      <form method="post">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                    {{ form.body.label }}
+                    {% if form.body.errors %}
+                        {{ form.body(class='form-control  is-invalid') }}
+                        {% for error in form.body.errors %}
+                           <div class="invalid-feedback">
+                               {{ error }}
+                           </div>
+                       {% endfor %}
+                   {% else %}
+                       {{ form.body(class='form-control') }}
+                   {% endif %}
+            </div>
+     </form>
+    </div>
+{% endblock %}
