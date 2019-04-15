@@ -7,7 +7,7 @@ from flask_wtf import FlaskForm
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
-from flask import Flask, render_template, redirect, url_for, flash, request, make_response, session
+from flask import Flask, render_template, redirect, url_for, flash, request, make_response, session, jsonify
 
 app = Flask(__name__)
 
@@ -33,8 +33,14 @@ class Message(db.Model):
     __tablename__ = 'message'
     body = db.Column(db.TEXT)
     time = db.Column(db.DATETIME)
-    ID = db.Column(db.Integer,  primary_key=True)
+    ID = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String)
+
+
+class Birth(db.Model):
+    __tablename__ = 'BIRTH'
+    time = db.Column(db.DATETIME)
+    ID = db.Column(db.Integer, primary_key=True)
 
 
 class WriteForm(FlaskForm):
@@ -104,6 +110,9 @@ def index():
 
 @app.route('/mess', methods=['GET', 'POST'])
 def message():
+    if session.get('username') is None:
+        return redirect(url_for('login'))
+
     form = WriteForm()
     name = session.get('username')
     if form.validate_on_submit():
@@ -116,3 +125,16 @@ def message():
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('mess.html', form=form)
+
+
+@app.route('/birth', methods=['GET', 'POST'])
+def birth():
+    birth = Birth(
+        time=datetime.now()
+    )
+    db.session.add(birth)
+    db.session.commit()
+    qwerty = Birth.query.all()
+    for bir in qwerty:
+        print(bir.ID)
+    return jsonify(bir.ID)
